@@ -1,0 +1,217 @@
+# =====================================================================
+# OILTRACE AI - prototype configuration
+# Every tunable number lives here. Nothing in the UI is hard-coded.
+#
+# `scenes` is a library of fully independent scenarios. Each has its own
+# imagery, metocean field and AIS extract; they share no data. Switching
+# scene re-runs the whole pipeline against different inputs.
+#
+# `adaptive_context` covers images with no matching scenario (uploads,
+# external datasets): a metocean field and AIS extract are synthesised
+# around the spill the system actually detected, so the full pipeline
+# can still be demonstrated. This is labelled in the UI.
+# =====================================================================
+
+detection:
+  mode_priority:
+  - unet
+  - reference_mask
+  - image_processing
+  model_path: models/unet_oilspill.onnx
+  blur_kernel: 7
+  min_region_pixels: 400
+  dark_ratio: 0.62
+  max_coverage_fraction: 0.6
+  morph_kernel: 5
+  confidence_weights:
+    contrast: 0.45
+    homogeneity: 0.3
+    shape: 0.25
+drift:
+  wind_factor: 0.03
+  wave_factor: 0.01
+  timestep_minutes: 15
+  spreading_rate_km_per_h: 4.0
+  max_hindcast_hours: 12.0
+  release_time_rounding_minutes: 30
+  forward_hours:
+  - 6
+  - 12
+  - 24
+ais:
+  candidate_radius_km: 20.0
+  release_window_hours: 2.0
+  ais_reporting_interval_minutes: 15
+attribution:
+  weights:
+    proximity: 0.3
+    temporal: 0.25
+    trajectory: 0.2
+    behaviour: 0.15
+    ais_continuity: 0.1
+  confidence_bands:
+    high: 80.0
+    medium: 60.0
+scenes:
+- id: arabian_sea
+  name: Arabian Sea - offshore Maharashtra
+  blurb: Tanker discharge on a northeast-setting current. Textbook case.
+  north: 18.6
+  south: 18.2
+  west: 72.5
+  east: 73.0
+  observation_time_utc: '2026-08-31T10:30:00Z'
+  truth_spill_centroid:
+  - 18.4321
+  - 72.8214
+  truth_origin:
+  - 18.3901
+  - 72.7542
+  truth_release_time_utc: '2026-08-31T07:00:00Z'
+  slick_length_km: 14.0
+  slick_area_km2: 12.6
+  culprit_cpa_km: 0.6
+  random_seed: 20260902
+  image_width: 1000
+  image_height: 800
+  fleet:
+  - - MARINA STAR
+    - '419001234'
+    - Oil/Chemical Tanker
+  - - OCEAN PIONEER
+    - '419002468'
+    - Bulk Carrier
+  - - SEA FALCON
+    - '419003571'
+    - Container Ship
+  - - EASTERN PEARL
+    - '419004682'
+    - General Cargo
+  - - BLUE HORIZON
+    - '419005793'
+    - Oil/Chemical Tanker
+  - - NORDIC WAVE
+    - '419006814'
+    - Bulk Carrier
+  - - ANCHOR BAY
+    - '419008036'
+    - Tug/Supply
+  - - GULF MERIDIAN
+    - '419009147'
+    - Container Ship
+  - - CORAL TRADER
+    - '419007925'
+    - General Cargo
+  - - PACIFIC DAWN
+    - '419010258'
+    - Vehicle Carrier
+- id: gulf_of_kutch
+  name: Gulf of Kutch - Kandla approach
+  blurb: Smaller, fresher slick drifting southwest. Shorter hindcast window.
+  north: 22.6
+  south: 22.2
+  west: 69.0
+  east: 69.5
+  observation_time_utc: '2026-08-31T06:30:00Z'
+  truth_spill_centroid:
+  - 22.348
+  - 69.162
+  truth_origin:
+  - 22.391
+  - 69.228
+  truth_release_time_utc: '2026-08-31T04:00:00Z'
+  slick_length_km: 10.0
+  slick_area_km2: 8.2
+  culprit_cpa_km: 1.4
+  random_seed: 20260903
+  image_width: 900
+  image_height: 900
+  fleet:
+  - - KUTCH VOYAGER
+    - '419101122'
+    - Oil/Chemical Tanker
+  - - SALAYA SPIRIT
+    - '419102233'
+    - Crude Oil Tanker
+  - - RANN TRADER
+    - '419103344'
+    - Bulk Carrier
+  - - OKHA EXPRESS
+    - '419104455'
+    - General Cargo
+  - - DWARKA STAR
+    - '419105566'
+    - Container Ship
+  - - SAURASHTRA BAY
+    - '419106677'
+    - Tug/Supply
+  - - MANDVI PRIDE
+    - '419107788'
+    - General Cargo
+  - - JAMNAGAR MARU
+    - '419108899'
+    - Crude Oil Tanker
+  - - PORBANDAR SUN
+    - '419109900'
+    - Bulk Carrier
+  - - NAVLAKHI DAWN
+    - '419110011'
+    - Vehicle Carrier
+- id: bay_of_bengal
+  name: Bay of Bengal - Chennai approach
+  blurb: Large, weathered slick with a five-hour hindcast. Hardest case.
+  north: 13.2
+  south: 12.8
+  west: 80.3
+  east: 80.8
+  observation_time_utc: '2026-08-31T14:00:00Z'
+  truth_spill_centroid:
+  - 13.045
+  - 80.582
+  truth_origin:
+  - 12.952
+  - 80.488
+  truth_release_time_utc: '2026-08-31T09:00:00Z'
+  slick_length_km: 20.0
+  slick_area_km2: 21.4
+  culprit_cpa_km: 0.4
+  random_seed: 20260904
+  image_width: 1100
+  image_height: 850
+  fleet:
+  - - CORMORANT
+    - '419201234'
+    - Crude Oil Tanker
+  - - ENNORE TRADER
+    - '419202345'
+    - Bulk Carrier
+  - - MARINA BEACH
+    - '419203456'
+    - Container Ship
+  - - PULICAT PEARL
+    - '419204567'
+    - General Cargo
+  - - COROMANDEL SKY
+    - '419205678'
+    - Oil/Chemical Tanker
+  - - ADYAR WAVE
+    - '419206789'
+    - Bulk Carrier
+  - - KATTUPALLI BAY
+    - '419207890'
+    - Tug/Supply
+  - - NAGAPATTINAM
+    - '419208901'
+    - Container Ship
+  - - PALK STRAIT
+    - '419209012'
+    - General Cargo
+  - - MAHABALIPURAM
+    - '419210123'
+    - Vehicle Carrier
+adaptive_context:
+  enabled: true
+  drift_bearing_deg: 57.0
+  culprit_cpa_km: 0.7
+  random_seed: 771
+  fleet_prefix: DEMO VESSEL

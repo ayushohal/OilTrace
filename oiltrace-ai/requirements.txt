@@ -1,0 +1,17 @@
+# OILTRACE AI - prototype dependencies
+# Everything runs offline once these are installed. No API keys, no cloud
+# services, no model downloads.
+
+streamlit>=1.32
+folium>=0.15
+streamlit-folium>=0.20
+numpy>=1.24
+pandas>=2.0
+opencv-python-headless>=4.8
+scipy>=1.10
+Pillow>=10.0
+PyYAML>=6.0
+
+# Optional - only needed if you drop a trained U-Net into models/.
+# The application runs, and falls back cleanly, without it.
+# onnxruntime>=1.17
